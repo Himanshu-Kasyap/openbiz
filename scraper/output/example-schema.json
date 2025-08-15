@@ -1,0 +1,384 @@
+{
+  "version": "1.0.0",
+  "scrapedAt": "2024-01-15T10:30:00.000Z",
+  "sourceUrl": "https://udyamregistration.gov.in/UdyamRegistration.aspx",
+  "metadata": {
+    "totalSteps": 2,
+    "totalFields": 8,
+    "description": "Udyam Registration Portal - Steps 1 & 2 Form Schema",
+    "steps": {
+      "step1": {
+        "name": "Aadhaar Verification",
+        "description": "Aadhaar number verification with OTP",
+        "fieldCount": 4
+      },
+      "step2": {
+        "name": "PAN Verification", 
+        "description": "PAN verification and personal details",
+        "fieldCount": 4
+      }
+    }
+  },
+  "steps": {
+    "step1": [
+      {
+        "id": "aadhaar_input",
+        "name": "aadhaarNumber",
+        "type": "text",
+        "label": "Aadhaar Number",
+        "placeholder": "Enter 12-digit Aadhaar number",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "Aadhaar Number is required"
+          },
+          {
+            "type": "pattern",
+            "value": "^[0-9]{12}$",
+            "message": "Aadhaar number must be 12 digits"
+          }
+        ],
+        "stepName": "step1",
+        "fieldIndex": 0,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "identity_aadhaar",
+          "uiHints": {
+            "inputMode": "numeric",
+            "autoComplete": "off",
+            "spellCheck": false,
+            "placeholder": "Enter 12-digit Aadhaar number",
+            "maxLength": 12,
+            "pattern": "[0-9]*"
+          }
+        }
+      },
+      {
+        "id": "mobile_input",
+        "name": "mobileNumber",
+        "type": "text",
+        "label": "Mobile Number",
+        "placeholder": "Enter mobile number",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "Mobile Number is required"
+          },
+          {
+            "type": "pattern",
+            "value": "^[6-9][0-9]{9}$",
+            "message": "Mobile number must be 10 digits starting with 6-9"
+          }
+        ],
+        "stepName": "step1",
+        "fieldIndex": 1,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "contact_mobile",
+          "uiHints": {
+            "inputMode": "numeric",
+            "autoComplete": "off",
+            "spellCheck": false,
+            "pattern": "[0-9]*"
+          }
+        }
+      },
+      {
+        "id": "otp_input",
+        "name": "otp",
+        "type": "text",
+        "label": "OTP",
+        "placeholder": "Enter 6-digit OTP",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "OTP is required"
+          },
+          {
+            "type": "pattern",
+            "value": "^[0-9]{6}$",
+            "message": "OTP must be 6 digits"
+          }
+        ],
+        "stepName": "step1",
+        "fieldIndex": 2,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "verification_otp",
+          "uiHints": {
+            "inputMode": "numeric",
+            "autoComplete": "off",
+            "spellCheck": false,
+            "placeholder": "Enter 6-digit OTP",
+            "maxLength": 6,
+            "pattern": "[0-9]*"
+          }
+        }
+      },
+      {
+        "id": "verify_button",
+        "name": "verifyAadhaar",
+        "type": "button",
+        "label": "Verify Aadhaar",
+        "required": false,
+        "validationRules": [],
+        "stepName": "step1",
+        "fieldIndex": 3,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": false,
+          "hasValidation": false,
+          "fieldCategory": "general",
+          "uiHints": {
+            "inputMode": "text",
+            "autoComplete": "off",
+            "spellCheck": false
+          }
+        }
+      }
+    ],
+    "step2": [
+      {
+        "id": "pan_input",
+        "name": "panNumber",
+        "type": "text",
+        "label": "PAN Number",
+        "placeholder": "Enter PAN (e.g., ABCDE1234F)",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "PAN Number is required"
+          },
+          {
+            "type": "pattern",
+            "value": "[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}",
+            "message": "PAN must be in format: 5 letters, 4 digits, 1 letter"
+          }
+        ],
+        "stepName": "step2",
+        "fieldIndex": 0,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "identity_pan",
+          "uiHints": {
+            "inputMode": "text",
+            "autoComplete": "off",
+            "spellCheck": false,
+            "placeholder": "Enter PAN (e.g., ABCDE1234F)",
+            "maxLength": 10,
+            "textTransform": "uppercase"
+          }
+        }
+      },
+      {
+        "id": "applicant_name",
+        "name": "applicantName",
+        "type": "text",
+        "label": "Applicant Name",
+        "placeholder": "Enter full name",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "Applicant Name is required"
+          }
+        ],
+        "stepName": "step2",
+        "fieldIndex": 1,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "personal_name",
+          "uiHints": {
+            "inputMode": "text",
+            "autoComplete": "name",
+            "spellCheck": true
+          }
+        }
+      },
+      {
+        "id": "state_select",
+        "name": "state",
+        "type": "select",
+        "label": "State",
+        "required": true,
+        "validationRules": [
+          {
+            "type": "required",
+            "value": true,
+            "message": "State is required"
+          }
+        ],
+        "options": [
+          {
+            "value": "MH",
+            "text": "Maharashtra"
+          },
+          {
+            "value": "KA",
+            "text": "Karnataka"
+          },
+          {
+            "value": "TN",
+            "text": "Tamil Nadu"
+          },
+          {
+            "value": "UP",
+            "text": "Uttar Pradesh"
+          }
+        ],
+        "stepName": "step2",
+        "fieldIndex": 2,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": true,
+          "hasValidation": true,
+          "fieldCategory": "location_state",
+          "uiHints": {
+            "inputMode": "text",
+            "autoComplete": "off",
+            "spellCheck": false
+          }
+        }
+      },
+      {
+        "id": "submit_button",
+        "name": "submitForm",
+        "type": "button",
+        "label": "Submit Application",
+        "required": false,
+        "validationRules": [],
+        "stepName": "step2",
+        "fieldIndex": 3,
+        "schemaVersion": "1.0.0",
+        "metadata": {
+          "isRequired": false,
+          "hasValidation": false,
+          "fieldCategory": "general",
+          "uiHints": {
+            "inputMode": "text",
+            "autoComplete": "off",
+            "spellCheck": false
+          }
+        }
+      }
+    ]
+  },
+  "validationRules": {
+    "aadhaar": {
+      "pattern": "^[0-9]{12}$",
+      "message": "Aadhaar number must be 12 digits",
+      "description": "Indian Aadhaar number validation"
+    },
+    "pan": {
+      "pattern": "[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}",
+      "message": "PAN must be in format: 5 letters, 4 digits, 1 letter",
+      "description": "Indian PAN card validation"
+    },
+    "otp": {
+      "pattern": "^[0-9]{6}$",
+      "message": "OTP must be 6 digits",
+      "description": "One-time password validation"
+    },
+    "mobile": {
+      "pattern": "^[6-9][0-9]{9}$",
+      "message": "Mobile number must be 10 digits starting with 6-9",
+      "description": "Indian mobile number validation"
+    },
+    "pincode": {
+      "pattern": "^[0-9]{6}$",
+      "message": "PIN code must be 6 digits",
+      "description": "Indian postal PIN code validation"
+    }
+  },
+  "fieldCategories": {
+    "identity": [
+      {
+        "id": "aadhaar_input",
+        "fieldCategory": "identity_aadhaar"
+      },
+      {
+        "id": "pan_input",
+        "fieldCategory": "identity_pan"
+      }
+    ],
+    "contact": [
+      {
+        "id": "mobile_input",
+        "fieldCategory": "contact_mobile"
+      }
+    ],
+    "location": [
+      {
+        "id": "state_select",
+        "fieldCategory": "location_state"
+      }
+    ],
+    "verification": [
+      {
+        "id": "otp_input",
+        "fieldCategory": "verification_otp"
+      }
+    ],
+    "personal": [
+      {
+        "id": "applicant_name",
+        "fieldCategory": "personal_name"
+      }
+    ],
+    "business": [],
+    "general": [
+      {
+        "id": "verify_button",
+        "fieldCategory": "general"
+      },
+      {
+        "id": "submit_button",
+        "fieldCategory": "general"
+      }
+    ]
+  },
+  "statistics": {
+    "totalSteps": 2,
+    "totalFields": 8,
+    "fieldsByType": {
+      "text": 6,
+      "button": 2,
+      "select": 1
+    },
+    "fieldsByCategory": {
+      "identity_aadhaar": 1,
+      "contact_mobile": 1,
+      "verification_otp": 1,
+      "general": 2,
+      "identity_pan": 1,
+      "personal_name": 1,
+      "location_state": 1
+    },
+    "validationRules": {
+      "total": 12,
+      "byType": {
+        "required": 6,
+        "pattern": 6
+      }
+    }
+  }
+}

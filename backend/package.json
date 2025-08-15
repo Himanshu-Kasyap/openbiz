@@ -1,0 +1,60 @@
+{
+  "name": "udyam-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Udyam registration replica",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "echo 'No build step required for Node.js'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "test:security": "jest --testPathPattern=tests/security",
+    "test:performance": "jest --testPathPattern=tests/performance --testTimeout=60000",
+    "test:load": "jest --testPathPattern=tests/performance/load-testing.test.js --testTimeout=60000",
+    "test:benchmark": "jest --testPathPattern=tests/performance/benchmarking.test.js --testTimeout=120000",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:security && npm run test:performance",
+    "test:ci": "jest --coverage --ci --watchAll=false --testTimeout=30000",
+    "test:verbose": "jest --verbose --coverage",
+    "test:comprehensive": "node scripts/run-comprehensive-tests.js",
+    "test:required": "node scripts/run-comprehensive-tests.js unit integration security",
+    "lint": "eslint src --ext .js",
+    "lint:fix": "eslint src --ext .js --fix",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "node prisma/seed.js",
+    "db:verify": "node scripts/verify-database.js",
+    "clean": "rm -rf node_modules/.cache"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0",
+    "prisma": "^5.7.1",
+    "@prisma/client": "^5.7.1",
+    "redis": "^4.6.11",
+    "express-session": "^1.17.3",
+    "connect-redis": "^7.1.0",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsdoc": "^46.9.0",
+    "prettier": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,149 @@
+# Alertmanager configuration for production
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@yourdomain.com'
+  smtp_auth_username: 'alerts@yourdomain.com'
+  smtp_auth_password: 'your-email-password'
+
+# Inhibition rules to prevent alert spam
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+
+# Route configuration
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'default'
+  routes:
+    # Critical alerts go to multiple channels
+    - match:
+        severity: critical
+      receiver: 'critical-alerts'
+      group_wait: 5s
+      repeat_interval: 30m
+    
+    # Security alerts
+    - match:
+        service: security
+      receiver: 'security-team'
+      group_wait: 5s
+      repeat_interval: 15m
+    
+    # Database alerts
+    - match:
+        service: postgresql
+      receiver: 'database-team'
+      repeat_interval: 30m
+    
+    # System alerts
+    - match:
+        service: system
+      receiver: 'infrastructure-team'
+      repeat_interval: 1h
+
+# Receivers configuration
+receivers:
+  - name: 'default'
+    email_configs:
+      - to: 'admin@yourdomain.com'
+        subject: '[Udyam] {{ .GroupLabels.alertname }}'
+        body: |
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+          {{ end }}
+
+  - name: 'critical-alerts'
+    email_configs:
+      - to: 'admin@yourdomain.com,oncall@yourdomain.com'
+        subject: '[CRITICAL] Udyam Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          🚨 CRITICAL ALERT 🚨
+          
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Severity: {{ .Labels.severity }}
+          Service: {{ .Labels.service }}
+          
+          Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+          
+          Runbook: {{ .Annotations.runbook_url }}
+          {{ end }}
+    
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#alerts-critical'
+        title: '🚨 Critical Alert: {{ .GroupLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Service:* {{ .Labels.service }}
+          *Severity:* {{ .Labels.severity }}
+          {{ if .Annotations.runbook_url }}*Runbook:* {{ .Annotations.runbook_url }}{{ end }}
+          {{ end }}
+        send_resolved: true
+
+  - name: 'security-team'
+    email_configs:
+      - to: 'security@yourdomain.com'
+        subject: '[SECURITY] Udyam Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          🔒 SECURITY ALERT 🔒
+          
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Service: {{ .Labels.service }}
+          
+          This alert requires immediate attention from the security team.
+          {{ end }}
+    
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#security-alerts'
+        title: '🔒 Security Alert: {{ .GroupLabels.alertname }}'
+        text: |
+          {{ range .Alerts }}
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Service:* {{ .Labels.service }}
+          {{ end }}
+
+  - name: 'database-team'
+    email_configs:
+      - to: 'dba@yourdomain.com'
+        subject: '[DATABASE] Udyam Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          🗄️ DATABASE ALERT 🗄️
+          
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Service: {{ .Labels.service }}
+          {{ end }}
+
+  - name: 'infrastructure-team'
+    email_configs:
+      - to: 'infra@yourdomain.com'
+        subject: '[INFRASTRUCTURE] Udyam Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          🏗️ INFRASTRUCTURE ALERT 🏗️
+          
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Service: {{ .Labels.service }}
+          {{ end }}
+
+# Templates for custom formatting
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'

@@ -1,0 +1,171 @@
+# Production Alert Rules for Udyam Registration Replica
+groups:
+  - name: application.rules
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: udyam-backend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }} errors per second for the last 5 minutes"
+          runbook_url: "https://docs.yourdomain.com/runbooks/high-error-rate"
+
+      # High response time alert
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: udyam-backend
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes"
+
+      # Database connection issues
+      - alert: DatabaseConnectionHigh
+        expr: db_connections_active / db_connections_max > 0.8
+        for: 2m
+        labels:
+          severity: warning
+          service: postgresql
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Database connection usage is at {{ $value | humanizePercentage }}"
+
+      # Memory usage alert
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }}"
+
+      # Disk space alert
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is {{ $value | humanizePercentage }} full"
+
+      # SSL certificate expiry
+      - alert: SSLCertificateExpiry
+        expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 7
+        for: 1h
+        labels:
+          severity: warning
+          service: ssl
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate expires in {{ $value | humanizeDuration }}"
+
+      # Application down
+      - alert: ApplicationDown
+        expr: up{job="udyam-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: udyam-backend
+        annotations:
+          summary: "Application is down"
+          description: "Udyam backend application has been down for more than 1 minute"
+
+      # Database down
+      - alert: DatabaseDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgresql
+        annotations:
+          summary: "Database is down"
+          description: "PostgreSQL database has been down for more than 1 minute"
+
+      # Redis down
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 1 minute"
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% for the last 5 minutes"
+
+      # Form submission rate anomaly
+      - alert: FormSubmissionRateAnomaly
+        expr: rate(form_submissions_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: udyam-backend
+        annotations:
+          summary: "Unusual form submission rate"
+          description: "Form submission rate is {{ $value }} submissions per second"
+
+      # Failed form validations
+      - alert: HighValidationFailureRate
+        expr: rate(form_validation_failures_total[5m]) / rate(form_submissions_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          service: udyam-backend
+        annotations:
+          summary: "High form validation failure rate"
+          description: "{{ $value | humanizePercentage }} of form submissions are failing validation"
+
+  - name: security.rules
+    rules:
+      # Rate limiting triggered
+      - alert: RateLimitingTriggered
+        expr: rate(rate_limit_exceeded_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Rate limiting frequently triggered"
+          description: "Rate limiting has been triggered {{ $value }} times per second"
+
+      # Suspicious activity
+      - alert: SuspiciousActivity
+        expr: rate(http_requests_total{status="403"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High number of forbidden requests"
+          description: "{{ $value }} forbidden requests per second detected"
+
+      # Failed authentication attempts
+      - alert: FailedAuthAttempts
+        expr: rate(auth_failures_total[5m]) > 2
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High number of failed authentication attempts"
+          description: "{{ $value }} failed authentication attempts per second"
